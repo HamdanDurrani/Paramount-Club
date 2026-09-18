@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/common/Button";
+import { CachedVideo } from "@/components/common/CachedVideo";
 import { VENUE_VIDEO, venuePageContent } from "@/data/venue";
 import styles from "./VenueHero.module.css";
 
@@ -36,7 +37,7 @@ export function VenueHero() {
     >
       <div className={styles.media}>
         {showVideo ? (
-          <video
+          <CachedVideo
             ref={videoRef}
             className={styles.video}
             src={VENUE_VIDEO.src}

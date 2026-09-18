@@ -1,8 +1,8 @@
-import type { GalleryCategory, GalleryItem } from "@/types";
-
 /**
- * Gallery media — venue, experiences, and hero photography.
+ * Gallery media — all venue, experience, hero, and atmosphere photography.
  */
+
+import type { GalleryCategory, GalleryItem } from "@/types";
 
 export const GALLERY_VIDEO = {
   src: "/media/gallery/hero-night.mp4",
@@ -230,6 +230,51 @@ export const galleryItems: GalleryItem[] = [
     size: "wide",
     aspectRatio: "16 / 10",
   },
+  {
+    id: "g-avail-1",
+    category: "venue",
+    title: "Evening Glow",
+    alt: "Evening atmosphere at Paramount Club",
+    src: "/media/availability/1.jpg",
+    size: "tall",
+    aspectRatio: "3 / 4",
+  },
+  {
+    id: "g-avail-2",
+    category: "events",
+    title: "Celebration Light",
+    alt: "Celebration lighting at Paramount Club",
+    src: "/media/availability/2.jpg",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-avail-3",
+    category: "weddings",
+    title: "Reception Mood",
+    alt: "Reception mood at Paramount Club",
+    src: "/media/availability/3.jpg",
+    size: "feature",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-avail-4",
+    category: "venue",
+    title: "Grand Setting",
+    alt: "Grand venue setting at Paramount Club",
+    src: "/media/availability/4.jpg",
+    size: "tall",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-avail-5",
+    category: "events",
+    title: "Night Celebration",
+    alt: "Night celebration at Paramount Club",
+    src: "/media/availability/5.jpg",
+    size: "square",
+    aspectRatio: "4 / 5",
+  },
 ];
 
 export const galleryPreviewItems = galleryItems.filter((item) =>
@@ -240,6 +285,8 @@ export const galleryPreviewItems = galleryItems.filter((item) =>
     "g-stage-1",
     "g-dance",
     "g-entrance-1",
+    "g-celebrity",
+    "g-avail-3",
   ].includes(item.id),
 );
 

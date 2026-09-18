@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/common/Button";
+import { CachedVideo } from "@/components/common/CachedVideo";
 import { GALLERY_VIDEO, galleryPageContent } from "@/data/gallery";
 import styles from "./GalleryHero.module.css";
 
@@ -36,7 +37,7 @@ export function GalleryHero() {
     >
       <div className={styles.media}>
         {showVideo ? (
-          <video
+          <CachedVideo
             ref={videoRef}
             className={styles.video}
             src={GALLERY_VIDEO.src}

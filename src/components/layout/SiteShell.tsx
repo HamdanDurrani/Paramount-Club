@@ -1,3 +1,4 @@
+import { VideoCachePrefetch } from "@/components/common/VideoCachePrefetch";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   eventVenueJsonLd,
@@ -18,6 +19,7 @@ export function SiteShell({ children }: SiteShellProps) {
       <JsonLd data={organizationJsonLd()} />
       <JsonLd data={websiteJsonLd()} />
       <JsonLd data={eventVenueJsonLd()} />
+      <VideoCachePrefetch />
       <Navbar />
       <main className={styles.main}>{children}</main>
       <Footer />

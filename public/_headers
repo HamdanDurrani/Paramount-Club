@@ -1,0 +1,10 @@
+# Netlify static asset caching for media (videos + images).
+# First request downloads; later visits use the long-lived browser/CDN cache.
+
+/media/*
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: public, max-age=31536000, immutable
+
+/media/*.mp4
+  Cache-Control: public, max-age=31536000, immutable
+  Accept-Ranges: bytes

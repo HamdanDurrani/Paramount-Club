@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CachedVideo } from "@/components/common/CachedVideo";
 import {
   HERO_IMAGE_DURATION_MS,
   HERO_IMAGES,
@@ -145,7 +146,7 @@ export function Hero() {
             slide === 0 && !videoFailed ? styles.layerActive : ""
           }`}
         >
-          <video
+          <CachedVideo
             ref={videoRef}
             className={styles.video}
             src={HERO_VIDEO.src}

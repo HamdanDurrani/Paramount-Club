@@ -25,7 +25,7 @@ export function GalleryPreview() {
           <SectionHeading
             eyebrow="Gallery"
             title={<span id="gallery-preview-heading">Moments in Frame</span>}
-            subtitle="A preview of the atmosphere. Full photography will replace these placeholders."
+            subtitle="A glimpse of celebrations, stage, and atmosphere at Paramount Club."
           />
           <Link href="/gallery" className={styles.viewAll}>
             View Full Gallery
