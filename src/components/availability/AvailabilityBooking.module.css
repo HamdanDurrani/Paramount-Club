@@ -1,0 +1,235 @@
+.section {
+  position: relative;
+  padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(4.5rem, 10vw, 7.5rem);
+  background: #0f0f0f;
+  scroll-margin-top: 5rem;
+  overflow: clip;
+}
+
+.sectionSuccess {
+  min-height: min(100svh, 56rem);
+}
+
+.scene {
+  transition:
+    filter 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: center top;
+}
+
+.sceneBlurred {
+  filter: blur(14px) saturate(0.78) brightness(0.55);
+  opacity: 0.55;
+  transform: scale(1.02);
+  pointer-events: none;
+  user-select: none;
+}
+
+.successOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  animation: overlay-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.successDim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 50% 45%,
+      rgba(198, 161, 91, 0.1),
+      transparent 62%
+    ),
+    rgba(8, 8, 8, 0.52);
+  animation: dim-in 0.55s ease both;
+}
+
+.successCard {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 34rem);
+  max-height: min(90svh, 40rem);
+  overflow: auto;
+  pointer-events: auto;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.header {
+  max-width: 42rem;
+  margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.heading {
+  margin: 0 0 1rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--color-ivory);
+  text-wrap: balance;
+}
+
+.body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+.layout {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+  align-items: start;
+  transition:
+    gap 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    grid-template-columns 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 2.5rem;
+  }
+
+  .layoutReviewing {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  }
+}
+
+.sideCol {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (min-width: 1100px) {
+  .sideSelecting {
+    position: sticky;
+    top: calc(var(--nav-height) + 1rem);
+  }
+
+  .sideReviewing {
+    position: static;
+  }
+}
+
+.slot {
+  display: grid;
+  transition: grid-template-rows 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slotOpen {
+  grid-template-rows: 1fr;
+}
+
+.slotClosed {
+  grid-template-rows: 0fr;
+}
+
+.slotInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pane {
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.55s ease;
+  will-change: opacity, transform;
+}
+
+.paneIn {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+.paneOut {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(0.985);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.calendarSlot.slotClosed .pane {
+  transform: translate3d(0, -16px, 0) scale(0.975);
+}
+
+.summarySlot.slotClosed .pane {
+  transform: translate3d(0, 16px, 0) scale(0.975);
+}
+
+.panel {
+  background: #1a1a1a;
+  border: 1px solid rgba(198, 161, 91, 0.22);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  min-width: 0;
+  transition: border-color 0.45s ease;
+}
+
+.layoutReviewing .panel {
+  border-color: rgba(198, 161, 91, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout,
+  .slot,
+  .pane,
+  .panel,
+  .scene,
+  .successOverlay,
+  .successDim {
+    transition: none;
+    animation: none;
+  }
+
+  .paneOut {
+    transform: none;
+    filter: none;
+  }
+
+  .sceneBlurred {
+    transform: none;
+  }
+}

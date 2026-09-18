@@ -1,0 +1,33 @@
+.section {
+  padding: var(--space-9) 0;
+}
+
+.panel {
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(ellipse at top, rgba(198, 161, 91, 0.08), transparent 55%),
+    var(--color-charcoal);
+  padding: clamp(2.5rem, 6vw, 5rem);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.title {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+}
+
+.copy {
+  color: var(--color-muted);
+  max-width: 28rem;
+  margin-bottom: var(--space-3);
+}

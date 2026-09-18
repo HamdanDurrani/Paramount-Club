@@ -1,0 +1,40 @@
+.section {
+  min-height: 80svh;
+  display: flex;
+  align-items: center;
+  padding-block: calc(var(--nav-height) + 4rem) 5rem;
+}
+
+.inner {
+  max-width: 40rem;
+}
+
+.code {
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 1.25rem;
+}
+
+.copy {
+  color: var(--color-muted);
+  max-width: 32rem;
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}

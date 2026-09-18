@@ -1,0 +1,20 @@
+.container {
+  width: min(100% - 2rem, var(--container-max));
+  margin-inline: auto;
+}
+
+.containerWide {
+  width: min(100% - 2rem, var(--container-wide));
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .container,
+  .containerWide {
+    width: min(100% - 4rem, var(--container-max));
+  }
+
+  .containerWide {
+    width: min(100% - 4rem, var(--container-wide));
+  }
+}

@@ -1,0 +1,50 @@
+.hero {
+  position: relative;
+  min-height: 70svh;
+  display: grid;
+  place-items: end stretch;
+  overflow: hidden;
+}
+
+.compact {
+  min-height: 55svh;
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+}
+
+.heroMedia {
+  height: 100%;
+  min-height: inherit;
+  border: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  padding: calc(var(--nav-height) + 3rem) 0 4rem;
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-light-gold);
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  max-width: 14ch;
+  line-height: 0.98;
+}
+
+.subtitle {
+  margin-top: var(--space-4);
+  max-width: 34rem;
+  color: var(--color-muted);
+  font-size: 1.05rem;
+}

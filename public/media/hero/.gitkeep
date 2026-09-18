@@ -1,0 +1,6 @@
+# Hero media
+# Place files here:
+#   hero.mp4
+#   hero-poster.jpg
+#
+# Then uncomment src/poster props on the Home Hero MediaPlaceholder.

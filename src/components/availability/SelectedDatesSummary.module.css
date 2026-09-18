@@ -1,0 +1,122 @@
+.summary {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(198, 161, 91, 0.14),
+      rgba(26, 26, 26, 0.96) 42%
+    ),
+    #1a1a1a;
+  border: 1px solid rgba(198, 161, 91, 0.35);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-bottom: 1.75rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-ivory);
+}
+
+.celebration {
+  margin: 0.65rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-light-gold);
+}
+
+.changeBtn {
+  min-height: 2.75rem;
+  padding: 0.7rem 1.25rem;
+  border: 1px solid rgba(198, 161, 91, 0.45);
+  background: transparent;
+  color: var(--color-ivory);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.changeBtn:hover {
+  border-color: var(--color-champagne);
+  background: rgba(198, 161, 91, 0.12);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 720px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(198, 161, 91, 0.22);
+  background: rgba(11, 11, 11, 0.35);
+}
+
+.date {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  color: var(--color-ivory);
+}
+
+.note {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.noteMuted {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.hint {
+  margin: 1.35rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}

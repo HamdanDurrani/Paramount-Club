@@ -1,0 +1,90 @@
+.hero {
+  padding: calc(var(--nav-height) + 3.5rem) 0 3rem;
+  background: #1a1a1a;
+}
+
+.heroInner {
+  max-width: 40rem;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.title {
+  margin: 0 0 1.15rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2.35rem, 5vw, 3.75rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-ivory);
+  text-wrap: balance;
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+.section {
+  padding: 0 0 clamp(4rem, 10vw, 7rem);
+  background: #1a1a1a;
+}
+
+.cta {
+  padding: clamp(4rem, 10vw, 7rem) 0;
+  background: #f4f1ea;
+  text-align: center;
+}
+
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 34rem;
+}
+
+.cta h2 {
+  margin: 0 0 1rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+  font-weight: 400;
+  color: #111;
+  text-wrap: balance;
+}
+
+.cta p {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.actions :global(a[class*="secondary"]) {
+  color: #111;
+  border-color: rgba(17, 17, 17, 0.28);
+}
+
+.actions :global(a[class*="secondary"]:hover) {
+  color: #111;
+  border-color: rgba(17, 17, 17, 0.55);
+  background: rgba(17, 17, 17, 0.04);
+}

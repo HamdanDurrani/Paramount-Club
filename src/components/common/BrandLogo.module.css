@@ -1,0 +1,43 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.image {
+  width: auto;
+  height: 2.35rem;
+  object-fit: contain;
+}
+
+/*
+ * Nav logo: fill the bar, blend black PNG background into the dark header
+ * so the gold crest sits cleanly (no rectangular stamp).
+ */
+.nav .image {
+  height: 4.35rem;
+  width: auto;
+  max-width: min(52vw, 22rem);
+  object-fit: contain;
+  mix-blend-mode: lighten;
+}
+
+/* Compact scrolled nav: smaller mark on the left */
+.compactLogo.nav .image,
+:global(.logoLeft) .image {
+  height: 2.85rem;
+  max-width: min(42vw, 13rem);
+}
+
+.footer .image {
+  height: 3.5rem;
+  max-width: 16rem;
+  mix-blend-mode: lighten;
+}
+
+@media (min-width: 960px) {
+  .nav .image {
+    height: 5rem;
+    max-width: 26rem;
+  }
+}

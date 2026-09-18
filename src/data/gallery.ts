@@ -1,0 +1,252 @@
+import type { GalleryCategory, GalleryItem } from "@/types";
+
+/**
+ * Gallery media — venue, experiences, and hero photography.
+ */
+
+export const GALLERY_VIDEO = {
+  src: "/media/gallery/hero-night.mp4",
+  poster: "/media/experiences/hero.jpg",
+} as const;
+
+export const galleryPageContent = {
+  hero: {
+    eyebrow: "Gallery",
+    title: "Moments captured in light.",
+    subtitle:
+      "A visual journey through Paramount Club — celebrations, stage, and atmosphere.",
+  },
+  intro: {
+    eyebrow: "The Collection",
+    heading: "Every celebration leaves a trace of light.",
+    body: "Browse weddings, Mehndi, Walima, and venue moments — each image a glimpse of the scale and hospitality that define Paramount Club.",
+  },
+  portfolio: {
+    eyebrow: "Browse",
+    heading: "All moments",
+  },
+  cta: {
+    title: "Ready to create your own moment?",
+    body: "Enquire for your date and begin shaping a celebration worth remembering.",
+  },
+};
+
+export const galleryCategories: { id: GalleryCategory; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "weddings", label: "Weddings" },
+  { id: "mehndi", label: "Mehndi" },
+  { id: "walima", label: "Walima" },
+  { id: "events", label: "Events" },
+  { id: "venue", label: "Venue" },
+];
+
+export const galleryItems: GalleryItem[] = [
+  {
+    id: "g-night",
+    category: "venue",
+    title: "Night Arrival",
+    alt: "Paramount Club exterior illuminated at night",
+    src: "/media/experiences/hero.jpg",
+    size: "feature",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-wedding",
+    category: "weddings",
+    title: "Wedding Portrait",
+    alt: "Bride and groom at Paramount Club",
+    src: "/media/experiences/weddings.jpg",
+    size: "tall",
+    aspectRatio: "3 / 4",
+  },
+  {
+    id: "g-mehndi",
+    category: "mehndi",
+    title: "Mehndi Evening",
+    alt: "Mehndi celebration at Paramount Club",
+    src: "/media/experiences/mehndi.jpg",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-walima",
+    category: "walima",
+    title: "Walima Reception",
+    alt: "Walima reception setting at Paramount Club",
+    src: "/media/experiences/walima.jpg",
+    size: "tall",
+    aspectRatio: "3 / 4",
+  },
+  {
+    id: "g-engagement",
+    category: "weddings",
+    title: "Engagement",
+    alt: "Engagement celebration at Paramount Club",
+    src: "/media/experiences/engagements.jpg",
+    size: "square",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-stage-1",
+    category: "venue",
+    title: "Stage Presence",
+    alt: "Floral stage with crystal chandeliers",
+    src: "/media/venue/1.png",
+    size: "feature",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-floral",
+    category: "venue",
+    title: "Floral Canopy",
+    alt: "Floral canopy stage with mirrored floor",
+    src: "/media/venue/2.png",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-draped",
+    category: "walima",
+    title: "Draped Grandeur",
+    alt: "Draped stage with ceremonial seating",
+    src: "/media/venue/3.png",
+    size: "tall",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-hall",
+    category: "venue",
+    title: "Grand Hall",
+    alt: "Grand hall walkway and stage",
+    src: "/media/venue/4.png",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-entrance-1",
+    category: "venue",
+    title: "Ceremonial Aisle",
+    alt: "Floral aisle entrance to the stage",
+    src: "/media/venue/entrance-1.jpg",
+    size: "tall",
+    aspectRatio: "3 / 4",
+  },
+  {
+    id: "g-entrance-2",
+    category: "venue",
+    title: "Candlelit Arrival",
+    alt: "Candlelit ceremonial walkway",
+    src: "/media/venue/entrance-2.jpg",
+    size: "square",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-entrance-3",
+    category: "events",
+    title: "Grand Entrance",
+    alt: "Grand floral entrance aisle",
+    src: "/media/venue/entrance-3.jpg",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-entrance-4",
+    category: "venue",
+    title: "Marble Walkway",
+    alt: "Marble aisle with floral light pedestals",
+    src: "/media/venue/entrance-4.jpg",
+    size: "tall",
+    aspectRatio: "3 / 4",
+  },
+  {
+    id: "g-dance",
+    category: "events",
+    title: "Dance Floor",
+    alt: "Dance floor under starlit ceiling",
+    src: "/media/venue/dance-floor.jpg",
+    size: "feature",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-dj",
+    category: "events",
+    title: "DJ Night",
+    alt: "Professional DJ setup at Paramount Club",
+    src: "/media/venue/dj.jpg",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-celebrity",
+    category: "events",
+    title: "Live Performance",
+    alt: "Celebrity singing on the Paramount Club stage",
+    src: "/media/venue/celebrity.jpg",
+    size: "tall",
+    aspectRatio: "3 / 4",
+  },
+  {
+    id: "g-corporate",
+    category: "events",
+    title: "Corporate Gathering",
+    alt: "Corporate event at Paramount Club",
+    src: "/media/experiences/corporate.jpg",
+    size: "square",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-private",
+    category: "events",
+    title: "Private Celebration",
+    alt: "Private celebration at Paramount Club",
+    src: "/media/experiences/private.jpg",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-hero-2",
+    category: "venue",
+    title: "Hall Atmosphere",
+    alt: "Paramount Club grand hall atmosphere",
+    src: "/media/hero/main-2.png",
+    size: "feature",
+    aspectRatio: "16 / 10",
+  },
+  {
+    id: "g-hero-3",
+    category: "weddings",
+    title: "Celebration Setting",
+    alt: "Celebration setting at Paramount Club",
+    src: "/media/hero/main3.png",
+    size: "tall",
+    aspectRatio: "4 / 5",
+  },
+  {
+    id: "g-hero-4",
+    category: "venue",
+    title: "Interior Light",
+    alt: "Luxury venue interior at Paramount Club",
+    src: "/media/hero/main4.png",
+    size: "wide",
+    aspectRatio: "16 / 10",
+  },
+];
+
+export const galleryPreviewItems = galleryItems.filter((item) =>
+  [
+    "g-night",
+    "g-wedding",
+    "g-mehndi",
+    "g-stage-1",
+    "g-dance",
+    "g-entrance-1",
+  ].includes(item.id),
+);
+
+export const homeGalleryFilters = [
+  { id: "all" as const, label: "All" },
+  { id: "weddings" as const, label: "Weddings" },
+  { id: "mehndi" as const, label: "Mehndi" },
+  { id: "walima" as const, label: "Walima" },
+  { id: "events" as const, label: "Events" },
+];

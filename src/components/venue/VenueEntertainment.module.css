@@ -1,0 +1,130 @@
+.section {
+  padding: clamp(4rem, 10vw, 7.5rem) 0;
+  background:
+    linear-gradient(
+      180deg,
+      #1c1c1c 0%,
+      #1a1a1a 50%,
+      #181818 100%
+    );
+}
+
+.header {
+  max-width: 38rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.heading {
+  margin: 0 0 1.15rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.8vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--color-ivory);
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+.grid {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: start;
+  }
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.media {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #222;
+}
+
+.mediaTall {
+  aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 900px) {
+  .media {
+    min-height: 24rem;
+  }
+
+  .mediaTall {
+    min-height: 28rem;
+  }
+
+  .feature:first-child {
+    padding-top: 2.5rem;
+  }
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feature:hover .image {
+  transform: scale(1.035);
+}
+
+.copy {
+  max-width: 28rem;
+}
+
+.copy h3 {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  font-weight: 400;
+  color: var(--color-ivory);
+}
+
+.copy p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    transition: none;
+  }
+
+  .feature:hover .image {
+    transform: none;
+  }
+}

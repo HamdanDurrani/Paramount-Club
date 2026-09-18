@@ -1,0 +1,7 @@
+# Place décor photography here, then set `src` in `src/data/decor.ts`.
+
+# Expected drop-in paths:
+#   classic.jpg
+#   grand.jpg
+#   garden-evening.jpg
+#   minimal.jpg

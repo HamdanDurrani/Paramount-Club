@@ -1,0 +1,263 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  height: 100dvh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #1a1a1a;
+  color: var(--color-warm-white);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  contain: paint;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.layerActive {
+  opacity: 1;
+  z-index: 1;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center 42%;
+  transform: scale(1.14);
+}
+
+.imageZoom {
+  animation: ken-burns-out 6.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.imageZoomAlt {
+  animation-name: ken-burns-pan;
+}
+
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(11, 11, 11, 0.58) 0%,
+      rgba(11, 11, 11, 0.14) 34%,
+      rgba(11, 11, 11, 0.28) 58%,
+      rgba(11, 11, 11, 0.84) 100%
+    );
+}
+
+.bottomBar {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: min(100% - 2rem, var(--container-wide));
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 0 2.25rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .bottomBar {
+    width: min(100% - 4rem, var(--container-wide));
+    padding-bottom: 3rem;
+  }
+}
+
+.content {
+  max-width: 40rem;
+  animation: fade-up 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+}
+
+.eyebrow {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-light-gold);
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.45);
+}
+
+.rule {
+  display: block;
+  width: 2.75rem;
+  height: 1px;
+  margin-bottom: 1.15rem;
+  background: linear-gradient(
+    90deg,
+    var(--color-champagne),
+    rgba(198, 161, 91, 0.15)
+  );
+  transform-origin: left center;
+  animation: rule-draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2.15rem, 5vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-warm-white);
+  text-wrap: balance;
+  text-shadow:
+    0 2px 28px rgba(0, 0, 0, 0.55),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.subtitle {
+  margin: 0 0 1.75rem;
+  max-width: 34rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(247, 242, 232, 0.84);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding-bottom: 0.55rem;
+}
+
+.dot {
+  width: 1.65rem;
+  height: 2px;
+  padding: 0.85rem 0;
+  margin: 0;
+  border: 0;
+  background:
+    linear-gradient(
+      rgba(247, 242, 232, 0.28),
+      rgba(247, 242, 232, 0.28)
+    )
+    center / 100% 2px no-repeat;
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    background 0.35s ease,
+    width 0.35s ease;
+}
+
+.dot:hover {
+  background:
+    linear-gradient(
+      rgba(247, 242, 232, 0.55),
+      rgba(247, 242, 232, 0.55)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.dotActive {
+  width: 2.4rem;
+  background:
+    linear-gradient(
+      var(--color-champagne),
+      var(--color-champagne)
+    )
+    center / 100% 2px no-repeat;
+}
+
+@media (max-width: 640px) {
+  .bottomBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress {
+    padding-bottom: 0;
+    align-self: flex-end;
+  }
+}
+
+@keyframes ken-burns-out {
+  from {
+    transform: scale(1.14) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1) translate3d(0, -1.5%, 0);
+  }
+}
+
+@keyframes ken-burns-pan {
+  from {
+    transform: scale(1.16) translate3d(-1.5%, 0, 0);
+  }
+  to {
+    transform: scale(1.02) translate3d(1%, -1%, 0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer {
+    transition: none;
+  }
+
+  .image {
+    transform: none;
+  }
+
+  .imageZoom,
+  .imageZoomAlt,
+  .content,
+  .rule {
+    animation: none;
+  }
+
+  .dot,
+  .dotActive {
+    transition: none;
+  }
+}

@@ -1,0 +1,82 @@
+.section {
+  padding: clamp(4rem, 10vw, 7.5rem) 0;
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 100% 0%,
+      rgba(198, 161, 91, 0.08),
+      transparent 55%
+    ),
+    #1a1a1a;
+}
+
+.grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(2.5rem, 5vw, 5rem);
+  }
+}
+
+.copy {
+  max-width: 34rem;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-champagne);
+}
+
+.heading {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.8vw, 3.15rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--color-ivory);
+  text-wrap: balance;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.body p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+.media {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--color-soft-black);
+}
+
+@media (min-width: 960px) {
+  .media {
+    aspect-ratio: 5 / 6;
+    min-height: 34rem;
+  }
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
