@@ -136,7 +136,7 @@
 }
 
 .day {
-  min-height: 4.25rem;
+  min-height: 5.35rem;
   border: 1px solid rgba(247, 242, 232, 0.1);
   padding: 0.45rem;
   display: flex;
@@ -205,6 +205,29 @@ button.day:hover {
   color: var(--color-champagne);
 }
 
+.shiftLines {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.shiftOpen,
+.shiftBooked {
+  font-size: 0.52rem;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.shiftOpen {
+  color: var(--color-champagne);
+}
+
+.shiftBooked {
+  color: var(--color-muted);
+}
+
 .chip {
   margin-top: auto;
   align-self: flex-start;
@@ -246,12 +269,11 @@ button.day:hover {
 
 @media (max-width: 720px) {
   .day {
-    min-height: 3.2rem;
+    min-height: 4.4rem;
     padding: 0.3rem;
   }
 
-  .statusLabel,
-  .chip {
+  .statusLabel {
     display: none;
   }
 

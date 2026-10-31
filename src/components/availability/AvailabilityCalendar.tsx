@@ -10,6 +10,7 @@ import {
   monthLabel,
   startOfToday,
 } from "@/data/calendar";
+import type { BookedDay } from "@/types";
 import styles from "./AvailabilityCalendar.module.css";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -17,12 +18,38 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 interface AvailabilityCalendarProps {
   selectedDates: string[];
   onToggleDate: (date: string) => void;
+  /** Days where both hall times are confirmed. Those days cannot be selected. */
+  bookedDates: readonly string[];
+  /** Days with at least one confirmed hall time. */
+  bookedDays: readonly BookedDay[];
   maxDates?: number;
+}
+
+function shiftCaption(morning?: string, evening?: string) {
+  if (morning === "booked" && evening !== "booked") {
+    return {
+      morning: "Lunch booked",
+      night: "Dinner open",
+      morningBooked: true,
+      nightBooked: false,
+    };
+  }
+  if (evening === "booked" && morning !== "booked") {
+    return {
+      morning: "Lunch open",
+      night: "Dinner booked",
+      morningBooked: false,
+      nightBooked: true,
+    };
+  }
+  return null;
 }
 
 export function AvailabilityCalendar({
   selectedDates,
   onToggleDate,
+  bookedDates,
+  bookedDays,
   maxDates = 4,
 }: AvailabilityCalendarProps) {
   const today = useMemo(() => startOfToday(), []);
@@ -32,9 +59,22 @@ export function AvailabilityCalendar({
     monthIndex: today.getMonth(),
   }));
 
+  const bookedDateSet = useMemo(() => new Set(bookedDates), [bookedDates]);
+  const bookedDayMap = useMemo(
+    () => new Map(bookedDays.map((day) => [day.date, day])),
+    [bookedDays],
+  );
+
   const days = useMemo(
-    () => buildMonthDays(cursor.year, cursor.monthIndex, today),
-    [cursor.year, cursor.monthIndex, today],
+    () =>
+      buildMonthDays(
+        cursor.year,
+        cursor.monthIndex,
+        today,
+        bookedDateSet,
+        bookedDayMap,
+      ),
+    [cursor.year, cursor.monthIndex, today, bookedDateSet, bookedDayMap],
   );
 
   const canGoPrev =
@@ -96,7 +136,7 @@ export function AvailabilityCalendar({
           <span className={`${styles.dot} ${styles.dotAvailable}`} /> Open
         </span>
         <span className={styles.legendItem}>
-          <span className={`${styles.dot} ${styles.dotBooked}`} /> Reserved
+          <span className={`${styles.dot} ${styles.dotBooked}`} /> Booked
         </span>
         <span className={styles.legendItem}>
           <span className={`${styles.dot} ${styles.dotSelected}`} /> Selected
@@ -127,6 +167,7 @@ export function AvailabilityCalendar({
           const isBooked = cell.status === "booked";
           const isPast = cell.status === "past";
           const isBlocked = atLimit && !isSelected;
+          const shifts = shiftCaption(cell.morning, cell.evening);
 
           if (isBooked || isPast) {
             return (
@@ -136,12 +177,12 @@ export function AvailabilityCalendar({
                 aria-label={
                   isPast
                     ? `${cell.date}, unavailable — past date`
-                    : `${cell.date}, reserved for ${cell.eventType}`
+                    : `${cell.date}, booked`
                 }
               >
                 <span className={styles.dayNum}>{dayNum}</span>
-                {isBooked && cell.eventType ? (
-                  <span className={styles.chip}>{cell.eventType}</span>
+                {isBooked ? (
+                  <span className={styles.chip}>Booked</span>
                 ) : null}
               </div>
             );
@@ -154,15 +195,38 @@ export function AvailabilityCalendar({
               className={`${styles.day} ${styles.available} ${
                 isSelected ? styles.selected : ""
               } ${isBlocked ? styles.blocked : ""}`}
-              aria-label={`${cell.date}, open${isSelected ? ", selected" : ""}${isBlocked ? ", limit reached" : ""}`}
+              aria-label={`${cell.date}, ${
+                shifts
+                  ? `${shifts.morning}, ${shifts.night}`
+                  : "open"
+              }${isSelected ? ", selected" : ""}${isBlocked ? ", limit reached" : ""}`}
               aria-pressed={isSelected}
               disabled={isBlocked}
               onClick={() => onToggleDate(cell.date!)}
             >
               <span className={styles.dayNum}>{dayNum}</span>
-              <span className={styles.statusLabel}>
-                {isSelected ? "Selected" : "Open"}
-              </span>
+              {shifts ? (
+                <span className={styles.shiftLines}>
+                  <span
+                    className={
+                      shifts.morningBooked ? styles.shiftBooked : styles.shiftOpen
+                    }
+                  >
+                    {shifts.morning}
+                  </span>
+                  <span
+                    className={
+                      shifts.nightBooked ? styles.shiftBooked : styles.shiftOpen
+                    }
+                  >
+                    {shifts.night}
+                  </span>
+                </span>
+              ) : (
+                <span className={styles.statusLabel}>
+                  {isSelected ? "Selected" : "Open"}
+                </span>
+              )}
             </button>
           );
         })}

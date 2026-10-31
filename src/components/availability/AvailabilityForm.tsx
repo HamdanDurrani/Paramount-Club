@@ -20,14 +20,16 @@ import {
   guestRanges,
   parkingEstimates,
 } from "@/data/availability";
-import { formatEnquiryDate } from "@/data/calendar";
+import { blockedHallShifts, formatEnquiryDate } from "@/data/calendar";
 import { stageDesigns } from "@/data/stageDesigns";
 import { checkAvailability } from "@/lib/api";
 import type {
   AvailabilityInquiry,
+  BookedDay,
   CateringPreference,
   DateRoleNote,
   EventType,
+  HallShift,
   SelectedDateEntry,
   StagePreference,
 } from "@/types";
@@ -55,6 +57,7 @@ export const initialInquiryState: AvailabilityInquiry = {
   decorUploadName: "",
   facilitiesNeeded: [],
   parkingEstimate: parkingEstimates[0],
+  shift: "",
   name: "",
   email: "",
   phone: "",
@@ -108,6 +111,9 @@ function validateStep(
     } else if (values.phone.replace(/\D/g, "").length < 10) {
       errors.phone = "Please enter a valid phone number.";
     }
+    if (!values.shift) {
+      errors.shift = "Please choose Lunch or Dinner.";
+    }
   }
 
   return errors;
@@ -120,6 +126,7 @@ interface AvailabilityFormProps {
   onChange: (next: AvailabilityInquiry) => void;
   onUpdateDateNote: (date: string, note: DateRoleNote) => void;
   onRemoveDate: (date: string) => void;
+  bookedDays: readonly BookedDay[];
   success: boolean;
   onSuccessChange: (success: boolean) => void;
 }
@@ -131,6 +138,7 @@ export function AvailabilityForm({
   onChange,
   onUpdateDateNote,
   onRemoveDate,
+  bookedDays,
   success,
   onSuccessChange,
 }: AvailabilityFormProps) {
@@ -141,8 +149,25 @@ export function AvailabilityForm({
   const [phase, setPhase] = useState<"in" | "out">("in");
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [, startTransition] = useTransition();
+  const [stageFile, setStageFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const shiftBlocks = blockedHallShifts(
+    values.selectedDates.map((entry) => entry.date),
+    bookedDays,
+  );
+  const valuesRef = useRef(values);
+  valuesRef.current = values;
+
+  useEffect(() => {
+    const current = valuesRef.current;
+    if (current.shift === "morning" && shiftBlocks.morning) {
+      onChange({ ...current, shift: "" });
+    } else if (current.shift === "evening" && shiftBlocks.evening) {
+      onChange({ ...current, shift: "" });
+    }
+  }, [onChange, shiftBlocks.evening, shiftBlocks.morning]);
 
   useEffect(() => {
     if (values.selectedDates.length === 0) return;
@@ -207,6 +232,7 @@ export function AvailabilityForm({
 
   const setWantsStage = (choice: StagePreference) => {
     if (choice === "no") {
+      setStageFile(null);
       onChange({
         ...values,
         wantsStage: "no",
@@ -231,6 +257,7 @@ export function AvailabilityForm({
   };
 
   const selectDesign = (id: string) => {
+    setStageFile(null);
     onChange({
       ...values,
       decorId: id,
@@ -245,6 +272,7 @@ export function AvailabilityForm({
 
   const onUpload = (file: File | null) => {
     if (!file) return;
+    setStageFile(file);
     onChange({
       ...values,
       decorId: STAGE_UPLOAD_ID,
@@ -293,9 +321,17 @@ export function AvailabilityForm({
     setErrors(stepErrors);
     if (Object.keys(stepErrors).length > 0) return;
 
+    if (values.decorId === STAGE_UPLOAD_ID && !stageFile) {
+      setFormError("Please choose your stage design file again.");
+      return;
+    }
+
     setSubmitting(true);
     const started = Date.now();
-    const result = await checkAvailability(values);
+    const result = await checkAvailability(
+      values,
+      values.decorId === STAGE_UPLOAD_ID ? stageFile : null,
+    );
     const wait = Math.max(0, SUBMIT_MIN_MS - (Date.now() - started));
     if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
     setSubmitting(false);
@@ -579,7 +615,10 @@ export function AvailabilityForm({
                       <Button
                         type="button"
                         variant="secondary"
-                        onClick={() => fileRef.current?.click()}
+                        onClick={() => {
+                          if (fileRef.current) fileRef.current.value = "";
+                          fileRef.current?.click();
+                        }}
                       >
                         {values.decorId === STAGE_UPLOAD_ID &&
                         values.decorUploadName
@@ -640,6 +679,51 @@ export function AvailabilityForm({
 
           {renderStep === 2 ? (
             <div className={styles.section}>
+              <fieldset className={styles.fieldset}>
+                <legend>Hall time</legend>
+                <p className={styles.hint}>
+                  One time applies to every date you selected.
+                </p>
+                <div className={styles.yesNo} role="radiogroup" aria-label="Hall time">
+                  {(
+                    [
+                      {
+                        id: "morning" as const,
+                        label: "Lunch",
+                        disabled: shiftBlocks.morning,
+                      },
+                      {
+                        id: "evening" as const,
+                        label: "Dinner",
+                        disabled: shiftBlocks.evening,
+                      },
+                    ] as const
+                  ).map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`${styles.choice} ${styles.shiftChoice} ${
+                        values.shift === option.id ? styles.choiceActive : ""
+                      }`}
+                      aria-pressed={values.shift === option.id}
+                      disabled={option.disabled}
+                      onClick={() => patch("shift", option.id as HallShift)}
+                    >
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+                {shiftBlocks.morning && shiftBlocks.evening ? (
+                  <em className={styles.error}>
+                    Those dates don’t share an open time. Remove a date to
+                    choose Lunch or Dinner.
+                  </em>
+                ) : null}
+                {errors.shift ? (
+                  <em className={styles.error}>{errors.shift}</em>
+                ) : null}
+              </fieldset>
+
               <div className={styles.grid}>
                 <label className={styles.field}>
                   <span>Full name</span>
@@ -723,7 +807,16 @@ export function AvailabilityForm({
               Continue
             </Button>
           ) : (
-            <Button type="submit" variant="primary" disabled={submitting}>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={
+                submitting ||
+                !values.shift ||
+                (values.shift === "morning" && shiftBlocks.morning) ||
+                (values.shift === "evening" && shiftBlocks.evening)
+              }
+            >
               {submitting ? "Sending…" : "Request Your Date"}
             </Button>
           )}

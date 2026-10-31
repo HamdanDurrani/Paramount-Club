@@ -119,6 +119,17 @@ export interface SelectedDateEntry {
 
 export type StagePreference = "yes" | "no" | "";
 
+/** Lunch is the midday slot (`morning`). Dinner is the night slot (`evening`). */
+export type HallShift = "morning" | "evening" | "";
+
+export type ShiftAvailability = "open" | "booked";
+
+export interface BookedDay {
+  date: string;
+  morning: ShiftAvailability;
+  evening: ShiftAvailability;
+}
+
 export interface AvailabilityInquiry {
   celebrationType: EventType | "";
   selectedDates: SelectedDateEntry[];
@@ -131,6 +142,8 @@ export interface AvailabilityInquiry {
   decorUploadName: string;
   facilitiesNeeded: string[];
   parkingEstimate: string;
+  /** Same hall time for every selected date. */
+  shift: HallShift;
   name: string;
   email: string;
   phone: string;
@@ -144,7 +157,7 @@ export interface ContactInquiry {
   message: string;
 }
 
-/** Visual-only calendar demo — not connected to a backend. */
+/** Public calendar day. Booked days come from confirmed enquiries. */
 export type CalendarDayStatus = "available" | "booked" | "empty" | "past";
 
 export interface CalendarDemoEvent {
@@ -158,4 +171,6 @@ export interface CalendarDemoDay {
   date: string | null;
   status: CalendarDayStatus;
   eventType?: "Barat" | "Walima";
+  morning?: ShiftAvailability;
+  evening?: ShiftAvailability;
 }

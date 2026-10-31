@@ -1,23 +1,15 @@
 /**
  * Availability calendar helpers.
- * Visual guide for the enquiry flow — final confirmation is always with our team.
+ * Open days are every future date that is not already confirmed in the API.
  */
 
-import type { CalendarDemoDay, CalendarDemoEvent } from "@/types";
+import type { BookedDay, CalendarDemoDay } from "@/types";
 
 export const CALENDAR_DEMO_NOTE =
   "Select up to 4 open dates within the next year. Past dates cannot be chosen — our team confirms every request personally.";
 
 /** How many months ahead (inclusive of current month) guests may browse. */
 export const CALENDAR_MONTHS_AHEAD = 12;
-
-/** Seeded demo reservations so the calendar shows reserved days year-round. */
-export const calendarDemoBookings: CalendarDemoEvent[] = [
-  { date: "2026-09-05", eventType: "Barat" },
-  { date: "2026-09-12", eventType: "Walima" },
-  { date: "2026-09-19", eventType: "Barat" },
-  { date: "2026-09-26", eventType: "Walima" },
-];
 
 export function toISODate(date: Date): string {
   const y = date.getFullYear();
@@ -61,41 +53,32 @@ export function formatEnquiryDate(iso: string): string {
   });
 }
 
-/** First Saturday of each month marked reserved for demo realism. */
-function buildRollingDemoBookings(
-  from: Date,
-  months: number,
-): Map<string, "Barat" | "Walima"> {
-  const map = new Map<string, "Barat" | "Walima">();
-
-  for (const booking of calendarDemoBookings) {
-    map.set(booking.date, booking.eventType);
+export function blockedHallShifts(
+  selectedDates: readonly string[],
+  days: readonly BookedDay[],
+): { morning: boolean; evening: boolean } {
+  const byDate = new Map(days.map((day) => [day.date, day]));
+  let morning = false;
+  let evening = false;
+  for (const date of selectedDates) {
+    const day = byDate.get(date);
+    if (!day) continue;
+    if (day.morning === "booked") morning = true;
+    if (day.evening === "booked") evening = true;
   }
-
-  for (let i = 0; i < months; i += 1) {
-    const cursor = new Date(from.getFullYear(), from.getMonth() + i, 1);
-    const year = cursor.getFullYear();
-    const month = cursor.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const firstSaturday = 1 + ((6 - firstDay + 7) % 7);
-    const iso = toISODate(new Date(year, month, firstSaturday));
-    if (!map.has(iso)) {
-      map.set(iso, i % 2 === 0 ? "Barat" : "Walima");
-    }
-  }
-
-  return map;
+  return { morning, evening };
 }
 
 export function buildMonthDays(
   year: number,
   monthIndex: number,
   today: Date = startOfToday(),
+  bookedDates: ReadonlySet<string> = new Set(),
+  bookedDays: ReadonlyMap<string, BookedDay> = new Map(),
 ): CalendarDemoDay[] {
   const first = new Date(year, monthIndex, 1);
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const startPad = first.getDay();
-  const bookingMap = buildRollingDemoBookings(today, CALENDAR_MONTHS_AHEAD);
   const todayIso = toISODate(today);
 
   const cells: CalendarDemoDay[] = [];
@@ -106,17 +89,32 @@ export function buildMonthDays(
 
   for (let day = 1; day <= daysInMonth; day += 1) {
     const iso = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const eventType = bookingMap.get(iso);
 
     if (iso < todayIso) {
       cells.push({ date: iso, status: "past" });
       continue;
     }
 
+    const shifts = bookedDays.get(iso);
+    const bothBooked =
+      bookedDates.has(iso) ||
+      (shifts?.morning === "booked" && shifts.evening === "booked");
+
+    if (bothBooked) {
+      cells.push({
+        date: iso,
+        status: "booked",
+        morning: "booked",
+        evening: "booked",
+      });
+      continue;
+    }
+
     cells.push({
       date: iso,
-      status: eventType ? "booked" : "available",
-      eventType,
+      status: "available",
+      morning: shifts?.morning,
+      evening: shifts?.evening,
     });
   }
 

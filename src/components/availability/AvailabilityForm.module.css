@@ -547,6 +547,24 @@
   border-color: rgba(198, 161, 91, 0.5);
 }
 
+.shiftChoice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.7rem 0.5rem;
+}
+
+.choice:disabled,
+.choice:disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(198, 161, 91, 0.12);
+  background: transparent;
+  color: var(--color-muted);
+}
+
 .choiceActive {
   border-color: var(--color-champagne);
   background: rgba(198, 161, 91, 0.14);
