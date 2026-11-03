@@ -2,79 +2,63 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { CalendarJumpSelect } from "@/components/availability/CalendarJumpSelect";
 import {
   CALENDAR_DEMO_NOTE,
+  MONTH_LABELS,
   addMonths,
   buildMonthDays,
+  clampMonthForYear,
   getCalendarBounds,
+  getSelectableYears,
+  isMonthInBounds,
   monthLabel,
   startOfToday,
 } from "@/data/calendar";
-import type { BookedDay } from "@/types";
 import styles from "./AvailabilityCalendar.module.css";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+type OpenMenu = "month" | "year" | null;
+
 interface AvailabilityCalendarProps {
   selectedDates: string[];
   onToggleDate: (date: string) => void;
-  /** Days where both hall times are confirmed. Those days cannot be selected. */
-  bookedDates: readonly string[];
-  /** Days with at least one confirmed hall time. */
-  bookedDays: readonly BookedDay[];
   maxDates?: number;
-}
-
-function shiftCaption(morning?: string, evening?: string) {
-  if (morning === "booked" && evening !== "booked") {
-    return {
-      morning: "Lunch booked",
-      night: "Dinner open",
-      morningBooked: true,
-      nightBooked: false,
-    };
-  }
-  if (evening === "booked" && morning !== "booked") {
-    return {
-      morning: "Lunch open",
-      night: "Dinner booked",
-      morningBooked: false,
-      nightBooked: true,
-    };
-  }
-  return null;
 }
 
 export function AvailabilityCalendar({
   selectedDates,
   onToggleDate,
-  bookedDates,
-  bookedDays,
   maxDates = 4,
 }: AvailabilityCalendarProps) {
   const today = useMemo(() => startOfToday(), []);
   const bounds = useMemo(() => getCalendarBounds(today), [today]);
+  const years = useMemo(() => getSelectableYears(today), [today]);
   const [cursor, setCursor] = useState(() => ({
     year: today.getFullYear(),
     monthIndex: today.getMonth(),
   }));
+  const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
 
-  const bookedDateSet = useMemo(() => new Set(bookedDates), [bookedDates]);
-  const bookedDayMap = useMemo(
-    () => new Map(bookedDays.map((day) => [day.date, day])),
-    [bookedDays],
+  const monthOptions = useMemo(
+    () =>
+      MONTH_LABELS.map((label, monthIndex) => ({
+        value: monthIndex,
+        label,
+        disabled: !isMonthInBounds(cursor.year, monthIndex, today),
+      })),
+    [cursor.year, today],
+  );
+
+  const yearOptions = useMemo(
+    () => years.map((year) => ({ value: year, label: String(year) })),
+    [years],
   );
 
   const days = useMemo(
-    () =>
-      buildMonthDays(
-        cursor.year,
-        cursor.monthIndex,
-        today,
-        bookedDateSet,
-        bookedDayMap,
-      ),
-    [cursor.year, cursor.monthIndex, today, bookedDateSet, bookedDayMap],
+    () => buildMonthDays(cursor.year, cursor.monthIndex, today),
+    [cursor.year, cursor.monthIndex, today],
   );
 
   const canGoPrev =
@@ -96,16 +80,29 @@ export function AvailabilityCalendar({
     setCursor((prev) => addMonths(prev.year, prev.monthIndex, 1));
   };
 
+  const onMonthChange = (monthIndex: number) => {
+    if (!isMonthInBounds(cursor.year, monthIndex, today)) return;
+    setCursor((prev) => ({ ...prev, monthIndex }));
+  };
+
+  const onYearChange = (year: number) => {
+    setCursor({
+      year,
+      monthIndex: clampMonthForYear(year, cursor.monthIndex, today),
+    });
+  };
+
   const selectedSet = useMemo(() => new Set(selectedDates), [selectedDates]);
   const atLimit = selectedDates.length >= maxDates;
+  const heading = monthLabel(cursor.year, cursor.monthIndex);
 
   return (
     <section className={styles.wrap} aria-labelledby="calendar-heading">
       <div className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>Availability</p>
+          <p className={styles.eyebrow}>Preferred dates</p>
           <h3 id="calendar-heading" className={styles.title}>
-            {monthLabel(cursor.year, cursor.monthIndex)}
+            {heading}
           </h3>
         </div>
 
@@ -131,13 +128,26 @@ export function AvailabilityCalendar({
         </div>
       </div>
 
+      <div className={styles.jumpRow}>
+        <CalendarJumpSelect
+          label="Month"
+          value={cursor.monthIndex}
+          options={monthOptions}
+          open={openMenu === "month"}
+          onOpenChange={(open) => setOpenMenu(open ? "month" : null)}
+          onChange={onMonthChange}
+        />
+        <CalendarJumpSelect
+          label="Year"
+          value={cursor.year}
+          options={yearOptions}
+          open={openMenu === "year"}
+          onOpenChange={(open) => setOpenMenu(open ? "year" : null)}
+          onChange={onYearChange}
+        />
+      </div>
+
       <div className={styles.legend} aria-label="Calendar legend">
-        <span className={styles.legendItem}>
-          <span className={`${styles.dot} ${styles.dotAvailable}`} /> Open
-        </span>
-        <span className={styles.legendItem}>
-          <span className={`${styles.dot} ${styles.dotBooked}`} /> Booked
-        </span>
         <span className={styles.legendItem}>
           <span className={`${styles.dot} ${styles.dotSelected}`} /> Selected
         </span>
@@ -164,26 +174,17 @@ export function AvailabilityCalendar({
 
           const dayNum = Number(cell.date.slice(-2));
           const isSelected = selectedSet.has(cell.date);
-          const isBooked = cell.status === "booked";
           const isPast = cell.status === "past";
           const isBlocked = atLimit && !isSelected;
-          const shifts = shiftCaption(cell.morning, cell.evening);
 
-          if (isBooked || isPast) {
+          if (isPast) {
             return (
               <div
                 key={cell.date}
-                className={`${styles.day} ${isBooked ? styles.booked : styles.past}`}
-                aria-label={
-                  isPast
-                    ? `${cell.date}, unavailable — past date`
-                    : `${cell.date}, booked`
-                }
+                className={`${styles.day} ${styles.past}`}
+                aria-label={`${cell.date}, unavailable — past date`}
               >
                 <span className={styles.dayNum}>{dayNum}</span>
-                {isBooked ? (
-                  <span className={styles.chip}>Booked</span>
-                ) : null}
               </div>
             );
           }
@@ -195,38 +196,12 @@ export function AvailabilityCalendar({
               className={`${styles.day} ${styles.available} ${
                 isSelected ? styles.selected : ""
               } ${isBlocked ? styles.blocked : ""}`}
-              aria-label={`${cell.date}, ${
-                shifts
-                  ? `${shifts.morning}, ${shifts.night}`
-                  : "open"
-              }${isSelected ? ", selected" : ""}${isBlocked ? ", limit reached" : ""}`}
+              aria-label={`${cell.date}${isSelected ? ", selected" : ""}${isBlocked ? ", limit reached" : ""}`}
               aria-pressed={isSelected}
               disabled={isBlocked}
               onClick={() => onToggleDate(cell.date!)}
             >
               <span className={styles.dayNum}>{dayNum}</span>
-              {shifts ? (
-                <span className={styles.shiftLines}>
-                  <span
-                    className={
-                      shifts.morningBooked ? styles.shiftBooked : styles.shiftOpen
-                    }
-                  >
-                    {shifts.morning}
-                  </span>
-                  <span
-                    className={
-                      shifts.nightBooked ? styles.shiftBooked : styles.shiftOpen
-                    }
-                  >
-                    {shifts.night}
-                  </span>
-                </span>
-              ) : (
-                <span className={styles.statusLabel}>
-                  {isSelected ? "Selected" : "Open"}
-                </span>
-              )}
             </button>
           );
         })}

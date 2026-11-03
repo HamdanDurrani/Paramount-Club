@@ -157,7 +157,7 @@ export interface ContactInquiry {
   message: string;
 }
 
-/** Public calendar day. Booked days come from confirmed enquiries. */
+/** Public calendar day. The website form does not close days from ops bookings. */
 export type CalendarDayStatus = "available" | "booked" | "empty" | "past";
 
 export interface CalendarDemoEvent {

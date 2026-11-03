@@ -1,15 +1,70 @@
 /**
  * Availability calendar helpers.
- * Open days are every future date that is not already confirmed in the API.
+ * The public form treats every future date as selectable; the office confirms later.
  */
 
-import type { BookedDay, CalendarDemoDay } from "@/types";
+import type { CalendarDemoDay } from "@/types";
+
+/** Guests may request dates through December of this year. */
+export const CALENDAR_MAX_YEAR = 2050;
+
+export const MONTH_LABELS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
+
+export function getCalendarBounds(today: Date = startOfToday()) {
+  const min = { year: today.getFullYear(), monthIndex: today.getMonth() };
+  const max = { year: CALENDAR_MAX_YEAR, monthIndex: 11 };
+  return { min, max };
+}
+
+export function getSelectableYears(today: Date = startOfToday()): number[] {
+  const { min, max } = getCalendarBounds(today);
+  const years: number[] = [];
+  for (let year = min.year; year <= max.year; year += 1) {
+    years.push(year);
+  }
+  return years;
+}
+
+export function isMonthInBounds(
+  year: number,
+  monthIndex: number,
+  today: Date = startOfToday(),
+): boolean {
+  const { min, max } = getCalendarBounds(today);
+  if (year < min.year || year > max.year) return false;
+  if (year === min.year && monthIndex < min.monthIndex) return false;
+  if (year === max.year && monthIndex > max.monthIndex) return false;
+  return true;
+}
+
+/** If the chosen year makes the current month invalid, snap to the nearest valid month. */
+export function clampMonthForYear(
+  year: number,
+  monthIndex: number,
+  today: Date = startOfToday(),
+): number {
+  if (isMonthInBounds(year, monthIndex, today)) return monthIndex;
+  const { min, max } = getCalendarBounds(today);
+  if (year === min.year) return min.monthIndex;
+  if (year === max.year) return max.monthIndex;
+  return Math.min(11, Math.max(0, monthIndex));
+}
 
 export const CALENDAR_DEMO_NOTE =
-  "Select up to 4 open dates within the next year. Past dates cannot be chosen — our team confirms every request personally.";
-
-/** How many months ahead (inclusive of current month) guests may browse. */
-export const CALENDAR_MONTHS_AHEAD = 12;
+  "Select up to 4 preferred dates. Use the month and year menus to jump ahead — our team confirms every request personally.";
 
 export function toISODate(date: Date): string {
   const y = date.getFullYear();
@@ -53,33 +108,17 @@ export function formatEnquiryDate(iso: string): string {
   });
 }
 
-export function blockedHallShifts(
-  selectedDates: readonly string[],
-  days: readonly BookedDay[],
-): { morning: boolean; evening: boolean } {
-  const byDate = new Map(days.map((day) => [day.date, day]));
-  let morning = false;
-  let evening = false;
-  for (const date of selectedDates) {
-    const day = byDate.get(date);
-    if (!day) continue;
-    if (day.morning === "booked") morning = true;
-    if (day.evening === "booked") evening = true;
-  }
-  return { morning, evening };
-}
-
 export function buildMonthDays(
   year: number,
   monthIndex: number,
   today: Date = startOfToday(),
-  bookedDates: ReadonlySet<string> = new Set(),
-  bookedDays: ReadonlyMap<string, BookedDay> = new Map(),
 ): CalendarDemoDay[] {
   const first = new Date(year, monthIndex, 1);
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const startPad = first.getDay();
   const todayIso = toISODate(today);
+  const { max } = getCalendarBounds(today);
+  const maxIso = toISODate(new Date(max.year, max.monthIndex + 1, 0));
 
   const cells: CalendarDemoDay[] = [];
 
@@ -90,32 +129,12 @@ export function buildMonthDays(
   for (let day = 1; day <= daysInMonth; day += 1) {
     const iso = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-    if (iso < todayIso) {
+    if (iso < todayIso || iso > maxIso) {
       cells.push({ date: iso, status: "past" });
       continue;
     }
 
-    const shifts = bookedDays.get(iso);
-    const bothBooked =
-      bookedDates.has(iso) ||
-      (shifts?.morning === "booked" && shifts.evening === "booked");
-
-    if (bothBooked) {
-      cells.push({
-        date: iso,
-        status: "booked",
-        morning: "booked",
-        evening: "booked",
-      });
-      continue;
-    }
-
-    cells.push({
-      date: iso,
-      status: "available",
-      morning: shifts?.morning,
-      evening: shifts?.evening,
-    });
+    cells.push({ date: iso, status: "available" });
   }
 
   while (cells.length % 7 !== 0) {
@@ -123,18 +142,4 @@ export function buildMonthDays(
   }
 
   return cells;
-}
-
-export function getCalendarBounds(today: Date = startOfToday()) {
-  const min = { year: today.getFullYear(), monthIndex: today.getMonth() };
-  const maxDate = new Date(
-    today.getFullYear(),
-    today.getMonth() + (CALENDAR_MONTHS_AHEAD - 1),
-    1,
-  );
-  const max = {
-    year: maxDate.getFullYear(),
-    monthIndex: maxDate.getMonth(),
-  };
-  return { min, max };
 }

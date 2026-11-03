@@ -31,9 +31,155 @@
   color: var(--color-ivory);
 }
 
+.jumpRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.jumpField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.jumpLabel {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.jumpTrigger {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid rgba(198, 161, 91, 0.4);
+  border-radius: 0;
+  background: #000000;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.jumpTrigger:hover,
+.jumpTriggerOpen {
+  border-color: #c6a15b;
+  background: #0d0d0d;
+}
+
+.jumpTrigger:focus-visible {
+  outline: 1px solid rgba(198, 161, 91, 0.75);
+  outline-offset: 2px;
+}
+
+.jumpValue {
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jumpCaret {
+  flex: 0 0 auto;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
+  transform: rotate(45deg) translateY(-1px);
+}
+
+.jumpTriggerOpen .jumpCaret {
+  transform: rotate(225deg) translateY(1px);
+}
+
+.jumpMenu {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid rgba(198, 161, 91, 0.55);
+  background: #000000 !important;
+  color: #ffffff !important;
+  font-family: var(--font-sans), "Manrope", system-ui, sans-serif;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(198, 161, 91, 0.55) #111111;
+}
+
+.jumpMenu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.jumpMenu::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+.jumpMenu::-webkit-scrollbar-thumb {
+  background: rgba(198, 161, 91, 0.55);
+}
+
+.jumpOptionItem {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jumpOption {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.45rem;
+  display: block;
+  border: 0;
+  border-radius: 0;
+  background: #000000;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  padding: 0.65rem 0.8rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.jumpOption:hover:not(:disabled),
+.jumpOption:focus-visible {
+  background: #1c1c1c;
+  color: #ffffff;
+  outline: none;
+}
+
+.jumpOptionActive {
+  background: #262626;
+  color: #ffffff;
+  box-shadow: inset 2px 0 0 #c6a15b;
+}
+
+.jumpOption:disabled {
+  color: rgba(255, 255, 255, 0.48);
+  cursor: not-allowed;
+}
+
 .nav {
   display: flex;
   gap: 0.45rem;
+  align-items: center;
 }
 
 .navBtn {
@@ -132,20 +278,20 @@
 }
 
 .empty {
-  min-height: 4.25rem;
+  min-height: 3.4rem;
 }
 
 .day {
-  min-height: 5.35rem;
+  min-height: 3.4rem;
   border: 1px solid rgba(247, 242, 232, 0.1);
   padding: 0.45rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
   background: rgba(11, 11, 11, 0.35);
   color: inherit;
   font: inherit;
-  text-align: left;
+  text-align: center;
 }
 
 button.day {
@@ -195,6 +341,11 @@ button.day:hover {
   font-family: var(--font-serif);
   font-size: 0.95rem;
   letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.selected .dayNum {
+  color: var(--color-champagne);
 }
 
 .statusLabel {
@@ -268,21 +419,10 @@ button.day:hover {
 }
 
 @media (max-width: 720px) {
-  .day {
-    min-height: 4.4rem;
+  .day,
+  .empty {
+    min-height: 2.85rem;
     padding: 0.3rem;
-  }
-
-  .statusLabel {
-    display: none;
-  }
-
-  .available .dayNum {
-    color: var(--color-light-gold);
-  }
-
-  .selected .dayNum {
-    color: var(--color-champagne);
   }
 }
 

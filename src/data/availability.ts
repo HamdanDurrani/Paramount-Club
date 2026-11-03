@@ -36,7 +36,7 @@ export const availabilityPageContent = {
   booking: {
     eyebrow: "Book your enquiry",
     heading: "Complete your date request",
-    body: "Pick open dates on the calendar, then continue through celebration preferences. We’ll take it from there.",
+    body: "Pick preferred dates on the calendar, then continue through celebration preferences. Our team confirms availability with you.",
   },
   cta: {
     title: "Prefer to speak with us first?",

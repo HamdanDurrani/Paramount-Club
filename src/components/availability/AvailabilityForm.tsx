@@ -20,12 +20,11 @@ import {
   guestRanges,
   parkingEstimates,
 } from "@/data/availability";
-import { blockedHallShifts, formatEnquiryDate } from "@/data/calendar";
+import { formatEnquiryDate } from "@/data/calendar";
 import { stageDesigns } from "@/data/stageDesigns";
 import { checkAvailability } from "@/lib/api";
 import type {
   AvailabilityInquiry,
-  BookedDay,
   CateringPreference,
   DateRoleNote,
   EventType,
@@ -126,7 +125,6 @@ interface AvailabilityFormProps {
   onChange: (next: AvailabilityInquiry) => void;
   onUpdateDateNote: (date: string, note: DateRoleNote) => void;
   onRemoveDate: (date: string) => void;
-  bookedDays: readonly BookedDay[];
   success: boolean;
   onSuccessChange: (success: boolean) => void;
 }
@@ -138,7 +136,6 @@ export function AvailabilityForm({
   onChange,
   onUpdateDateNote,
   onRemoveDate,
-  bookedDays,
   success,
   onSuccessChange,
 }: AvailabilityFormProps) {
@@ -153,22 +150,6 @@ export function AvailabilityForm({
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const shiftBlocks = blockedHallShifts(
-    values.selectedDates.map((entry) => entry.date),
-    bookedDays,
-  );
-  const valuesRef = useRef(values);
-  valuesRef.current = values;
-
-  useEffect(() => {
-    const current = valuesRef.current;
-    if (current.shift === "morning" && shiftBlocks.morning) {
-      onChange({ ...current, shift: "" });
-    } else if (current.shift === "evening" && shiftBlocks.evening) {
-      onChange({ ...current, shift: "" });
-    }
-  }, [onChange, shiftBlocks.evening, shiftBlocks.morning]);
-
   useEffect(() => {
     if (values.selectedDates.length === 0) return;
     setErrors((prev) => {
@@ -178,6 +159,14 @@ export function AvailabilityForm({
       return next;
     });
   }, [values.selectedDates]);
+
+  const scrollFormIntoView = (behavior: ScrollBehavior = "smooth") => {
+    const target =
+      panelRef.current ?? document.getElementById("date-request");
+    if (!target) return;
+    // Keep the form under the sticky nav; "nearest" was jumping past the panel.
+    target.scrollIntoView({ behavior, block: "start" });
+  };
 
   useEffect(() => {
     if (step === renderStep) return;
@@ -189,23 +178,30 @@ export function AvailabilityForm({
     if (reduced) {
       setRenderStep(step);
       setPhase("in");
-      return;
+      window.requestAnimationFrame(() => {
+        if (!cancelled) scrollFormIntoView("auto");
+      });
+      return () => {
+        cancelled = true;
+      };
     }
 
     setPhase("out");
+    let settleTimer = 0;
     const timer = window.setTimeout(() => {
       if (cancelled) return;
       setRenderStep(step);
       setPhase("in");
-      panelRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
+      // Side calendar ↔ summary animates ~650ms; scroll after that so the form stays put.
+      settleTimer = window.setTimeout(() => {
+        if (!cancelled) scrollFormIntoView();
+      }, 680);
     }, STEP_MS);
 
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
+      window.clearTimeout(settleTimer);
     };
   }, [step, renderStep]);
 
@@ -299,15 +295,23 @@ export function AvailabilityForm({
     const nextErrors = validateStep(step, values);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      scrollFormIntoView();
       return;
     }
+    if (typeof document !== "undefined") {
+      (document.activeElement as HTMLElement | null)?.blur?.();
+    }
+    scrollFormIntoView();
     startTransition(() => {
       onStepChange(Math.min(step + 1, STEPS.length - 1));
     });
   };
 
   const goBack = () => {
+    if (typeof document !== "undefined") {
+      (document.activeElement as HTMLElement | null)?.blur?.();
+    }
+    scrollFormIntoView();
     startTransition(() => {
       onStepChange(Math.max(step - 1, 0));
     });
@@ -687,16 +691,8 @@ export function AvailabilityForm({
                 <div className={styles.yesNo} role="radiogroup" aria-label="Hall time">
                   {(
                     [
-                      {
-                        id: "morning" as const,
-                        label: "Lunch",
-                        disabled: shiftBlocks.morning,
-                      },
-                      {
-                        id: "evening" as const,
-                        label: "Dinner",
-                        disabled: shiftBlocks.evening,
-                      },
+                      { id: "morning" as const, label: "Lunch" },
+                      { id: "evening" as const, label: "Dinner" },
                     ] as const
                   ).map((option) => (
                     <button
@@ -706,19 +702,12 @@ export function AvailabilityForm({
                         values.shift === option.id ? styles.choiceActive : ""
                       }`}
                       aria-pressed={values.shift === option.id}
-                      disabled={option.disabled}
                       onClick={() => patch("shift", option.id as HallShift)}
                     >
                       <span>{option.label}</span>
                     </button>
                   ))}
                 </div>
-                {shiftBlocks.morning && shiftBlocks.evening ? (
-                  <em className={styles.error}>
-                    Those dates don’t share an open time. Remove a date to
-                    choose Lunch or Dinner.
-                  </em>
-                ) : null}
                 {errors.shift ? (
                   <em className={styles.error}>{errors.shift}</em>
                 ) : null}
@@ -810,12 +799,7 @@ export function AvailabilityForm({
             <Button
               type="submit"
               variant="primary"
-              disabled={
-                submitting ||
-                !values.shift ||
-                (values.shift === "morning" && shiftBlocks.morning) ||
-                (values.shift === "evening" && shiftBlocks.evening)
-              }
+              disabled={submitting || !values.shift}
             >
               {submitting ? "Sending…" : "Request Your Date"}
             </Button>
